@@ -8,5 +8,5 @@ module.exports={
     Nlogin:"You are not logged",
     Uauth:"You are not authorized to perform action",
     Unknown:"Unknown Error Occured",
-    Required :"PLease Fill all fields"
+    Required :"Please Fill all fields"
 }

@@ -8,17 +8,17 @@ const informSchema = new mongoose.Schema(
         },
         Locationlat:{
             type:String,
-           required : true,
+          // required : true
            //TODO MAKE LOCATION REQUIRED
            //TODO REMOVE ALL COMMENT 
         },
         Locationlng:{
             type : String,
-            required :true 
+           // required :true 
         },
         Locationcity:{
             type : String,
-            required
+            //required
         },
         Picture:{
             type : String,
@@ -42,3 +42,5 @@ const informSchema = new mongoose.Schema(
         }*/
     }
 );
+
+module.exports=mongoose.model('Inform',informSchema);

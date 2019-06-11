@@ -5,63 +5,61 @@ const User = require('../models/User');
 const numverify= require('../../config/numverify');
 const Perrors = require('../Errors')
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 //@route  POST /User
 //@desc   create user account
 //@access public
 router.post('/',(req,res)=>{
-    if (!req.body.Fullname || !req.body.Email || !req.body.Password || !req.body.Phone_Number) {
-        res.json({ success: false, Error: Perrors.Required });
+    if (!req.body.fullname || !req.body.email || !req.body.password || !req.body.phonenumber) {
+        res.json({ success: "false", Error: Perrors.Required });
     }else{
-        query={number:req.body.Phone_Number};
-        numverify.validate(query,(err,result)=>{
-            if(err) {res.status(401).json({Errors:Perrors.Unknown});}
-            if(result.valid==true){
-                User.findOne({Email:req.body.Email},(err,result)=>{
-                    if(err){res.status(401).json({Error:Perrors.Unknown});}
-                    if (result.length>0){
-                        res.status(400).json({Error:Perrors.ALEmail});
-                    }else {
-                        if(isvalid(req.body.Email))
-                        {
-                            bcrypt.hash(myPlaintextPassword, saltRounds, function(err, hash) {
-                               var names = (req.body.Fullname).split(" ")
-                                var newUser = new User(
-                                    {
-                                        Email :req.body.Email,
-                                        Password :req.body.Password,
-                                        Phone_Number:req.body.Phone_Number,
-                                        Fistname : names[0],
-                                        Lastname : names[1]
-                                    }
-                                );
-                                newUser.save((err,user)=>{
-                                    if(err){res.json({Error:Perrors.Unknown});}
-                                    else{
-                                        res.status(201).json({
-                                            Email:user.Email,
-                                            Type :user.Type,
-                                            Verified :user.Verified,
-                                            Phone_Number:user.Phone_Number
-                                        });
-                                    }
-                                });
-
-                                
-                              });
-                        }
-                        else {
-                            res.status(301).json({Error:Perrors.IEmail});
-                        }
+        if(isvalid(req.body.email))
+        {
+            User.find({ $or: [ { email: req.body.email }, { phonenumber:req.body.phonenumber} ] },(err,result)=>{
+                if(err)
+                {
+                    res.json({ success: "false", Error: Perrors.Unknown });
+                }
+                else
+                {
+                    if (result.length>0)
+                    {
+                        res.json({ success: "false",Error:"Phone Number or Email already in use"});
                     }
-                    
-                })
-            }
-        })
-        
-    }
-    
-})
+                    else
+                    {
+                        bcrypt.hash(req.body.password,10, function(err, hash) {
+                                if(err)
+                                {
+                                    res.json({ success: "false", Error: Perrors.Unknown });
+                                }
+                                else
+                                {
+                                    names = (req.body.fullname).split(" ");
+                                    var Newuser = new User(
+                                        {
+                                            email : req.body.email,
+                                            password : hash,
+                                            phonenumber : req.body.phonenumber,
+                                            firstname : names[0],
+                                            lastname : names[1],
+                                            type : req.body.type
 
+                                        });
+                                    Newuser.save().then((output)=>{res.json({output});})
+                                        .catch((err)=>{res.json({ success: "false", Error: Perrors.Unknown });});
+                                }
+                          });
+                    }
+                }
+            })
+        }
+        else {
+            res.json({ success: "false", Error: Perrors.IEmail});
+        }
+
+    }
+});
 
 module.exports = router;
