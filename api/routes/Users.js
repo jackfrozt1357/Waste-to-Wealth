@@ -1,17 +1,19 @@
 const express = require('express');
+const passport = require('passport');
 const router = express.Router();
 const isvalid = require('../middleware/isvalidmail');
 const User = require('../models/User');
-const numverify= require('../../config/numverify');
+//const numverify= require('../../config/numverify'); TODO add correct number verification
 const Perrors = require('../Errors')
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const privatekey = require('../../config/secret').privatekey;
 
 //@route  POST /User
 //@desc   create user account
 //@access public
 router.post('/',(req,res)=>{
-    if (!req.body.fullname || !req.body.email || !req.body.password || !req.body.phonenumber) {
+    if (!req.body.fullname || !req.body.email || !req.body.password || !req.body.phonenumber || !req.body.type) {
         res.json({ success: "false", Error: Perrors.Required });
     }else{
         if(isvalid(req.body.email))
@@ -19,7 +21,7 @@ router.post('/',(req,res)=>{
             User.find({ $or: [ { email: req.body.email }, { phonenumber:req.body.phonenumber} ] },(err,result)=>{
                 if(err)
                 {
-                    res.json({ success: "false", Error: Perrors.Unknown });
+                    res.json({ success: "false", Error: Perrors.Unknown + "did not find" });
                 }
                 else
                 {
@@ -32,7 +34,7 @@ router.post('/',(req,res)=>{
                         bcrypt.hash(req.body.password,10, function(err, hash) {
                                 if(err)
                                 {
-                                    res.json({ success: "false", Error: Perrors.Unknown });
+                                    res.json({ success: "false", Error: Perrors.Unknown + "did not hash" });
                                 }
                                 else
                                 {
@@ -47,11 +49,23 @@ router.post('/',(req,res)=>{
                                             type : req.body.type
 
                                         });
-                                        //remove password
-                                    Newuser.save().then((output)=>{res.json({output});})
-                                        .catch((err)=>{res.json({ success: "false", Error: Perrors.Unknown });});
+                                        
+                                    Newuser.save()
+                                    .then((output)=>{
+                                            jwt.sign({id:output._id,email:output.email,fname:output.firstname,createdAt :Date.now()},privatekey,{expiresIn:"10h"},(err,token)=>{
+                                                if(err)
+                                                {
+                                                    res.json({success:"false",msg:Perrors.Unknown})
+                                                }else{
+                                                    res.json({success:"true",email:output.email,firstname:output.firstname,lastname:output.lastname,phonenumber:output.phonenumber,type:output.type,verfied:output.verified,access_token:"Bearer " + token})
+                                                }
+                                            });
+                                        })
+                                        
+                                        .catch((err)=>{
+                                            if(err){res.json({ success: "false", Error: Perrors.Unknown});}});
                                 }
-                          });
+                          });//TODO PUT CORRECT ERRORS CODE
                     }
                 }
             })
@@ -70,9 +84,9 @@ router.post('/',(req,res)=>{
 
 
 router.post('/login',(req,res)=>{
-    if(!req.body.email || req.body.password)
+    if(!req.body.email || !req.body.password)
     {
-        res.json({success:"false",msg:pe.Required});
+        res.json({success:"false",msg:Perrors.Required});
     }
     else
     {
@@ -95,7 +109,7 @@ router.post('/login',(req,res)=>{
                                 res.json({success:"false",msg:"Something went wrong"});
                             }
                             else{
-                                res.json({success:"true",token:"Bearer "+token});
+                                res.json({success:"true",email:rdata.email,firstname:rdata.firstname,lastname:rdata.lastname,type:rdata.type,phonenumber:rdata.phonenumber,verified:rdata.verified,access_token:"Bearer "+token});
                             }
                         });
                     }
@@ -105,5 +119,17 @@ router.post('/login',(req,res)=>{
             
     }
     
+});
+//@route Post /api/user/verification
+//@desc verify users & grant permissions
+//@access private
+
+
+router.post('/verification',passport.authenticate('jwt', { session: false }),(req,res)=>{
+    res.json({sucess:"true"});
+    // INSTRUCTIONS : on signup send mail to user
+    //user client calls verify that takes in a pin
+    // then if true send and empty array(or send success : true)
+    //TODO use get phonenumber to use mailgun
 });
 module.exports = router;

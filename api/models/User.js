@@ -24,7 +24,7 @@ const userSchema =  new mongoose.Schema(
         },
         type :{
             type : Number,
-            required : true
+            required : true //"0" rec8or or "1" intermidiary
         },
         phonenumber:{
             type : String,
@@ -32,7 +32,7 @@ const userSchema =  new mongoose.Schema(
         },
         verified :{
             type : String,
-            default :"0"
+            default :"0" //value is one when 1 when verified
         }
         ,
         location :{
