@@ -1,38 +1,43 @@
 const mongoose =require('mongoose');
 const informSchema = new mongoose.Schema(
     {
-        User :{
+        user :{
             type : mongoose.Schema.Types.ObjectId,
             ref :'User',
             required : true 
         },
-        Locationlat:{
+        locationlat:{
             type:String,
-          // required : true
+            required : true
            //TODO MAKE LOCATION REQUIRED
            //TODO REMOVE ALL COMMENT 
         },
-        Locationlng:{
+        locationlng:{
             type : String,
-           // required :true 
+           required :true 
         },
-        Locationcity:{
+        locationcity:{
             type : String,
-            //required
+            required : true
+        
         },
-        Picture:{
+        picture:{
             type : String,
-            //required :true
+            required :true
         },
-        Address : {
+        address : {
             type : String ,
             required :true
         },
-        Time_sent :{
+        type:{
+            type :String,
+            required : true
+        },
+        time_sent :{
             type : Date ,
             default : Date.now
         },
-        Quantity :{
+        quantity :{
             type : String,
             required : true 
         }
