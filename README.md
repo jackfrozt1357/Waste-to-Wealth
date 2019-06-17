@@ -5,25 +5,6 @@ This is a backend for a mobile application
 
 ## Routes /<object>/action
 
-TO-DO
-
-
-```bash
-//@route  POST /User
-//@desc   create user account
-//@access public# 
-
-
-
-Add location support
-twilo to verify signup
-
-```
-
-```bash
-//@route  POST /Login
-//@desc   Log user in
-//@access public
 
 
 ```
@@ -41,11 +22,6 @@ twilo to verify signup
 //@access protected
 
 ```
-
-```bash
-//@route  POST /User/Inform
-//@desc   add feeds to users in same city
-//@access protected
 
 ```
 
