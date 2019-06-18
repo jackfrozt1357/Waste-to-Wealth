@@ -16,12 +16,7 @@ This is a backend for a mobile application
 
 
 ```
-```bash
-//@route  GET /User/feeds
-//@desc   Get all feed within user city 
-//@access protected
 
-```
 
 ```
 
