@@ -35,11 +35,11 @@ router.get('/',passport.authenticate('jwt',{session:false}),(req,res)=>{
                               });
                     }
                 )
-                .catch((err)=>{res.json({success:"false",msg:"data fetch failed"})});
+                .catch((err)=>{res.json({success:"false",Error:"data fetch failed"})});
 
 }
           else{
-            res.json({success:"false",msg:"You are not verified"});
+            res.json({success:"false",Error:"You are not verified"});
           }
             
 

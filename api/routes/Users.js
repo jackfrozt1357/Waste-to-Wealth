@@ -59,7 +59,7 @@ router.post('/',(req,res)=>{
                                             jwt.sign({id:output._id,email:output.email,fname:output.firstname,createdAt :Date.now()},privatekey,{expiresIn:"10h"},(err,token)=>{
                                                 if(err)
                                                 {
-                                                    res.json({success:"false",msg:Perrors.Unknown})
+                                                    res.json({success:"false",Error:Perrors.Unknown})
                                                 }else{
                                                     res.json({success:"true",email:output.email,firstname:output.firstname,lastname:output.lastname,phonenumber:output.phonenumber,type:output.type,verfied:output.verified,access_token:"Bearer " + token})
                                                 }
@@ -90,27 +90,27 @@ router.post('/',(req,res)=>{
 router.post('/login',(req,res)=>{
     if(!req.body.email || !req.body.password)
     {
-        res.json({success:"false",msg:Perrors.Required});
+        res.json({success:"false",Error:Perrors.Required});
     }
     else
     {
         User.findOne({email:req.body.email},(err,rdata)=>{
             if(err||!rdata) 
             {
-                res.json({success:"false",msg:"Invalid"});
+                res.json({success:"false",Error:"Invalid"});
             }
             else
             {
                 bcrypt.compare(req.body.password,rdata.password, function(err,isvalid) {
                     // res == true
                     if(err || isvalid==false){
-                        res.json({success:"false",msg:"Auth failed"});
+                        res.json({success:"false",Error:"Auth failed"});
                     }
                     else{
                         jwt.sign({id:rdata._id,email:rdata.email,fname:rdata.fname,created :Date.now()},privatekey,{expiresIn:"10h"},(err,token)=>{
                             if(err)
                             {
-                                res.json({success:"false",msg:"Something went wrong"});
+                                res.json({success:"false",Error:"Something went wrong"});
                             }
                             else{
                                 res.json({success:"true",email:rdata.email,firstname:rdata.firstname,lastname:rdata.lastname,type:rdata.type,phonenumber:rdata.phonenumber,verified:rdata.verified,access_token:"Bearer "+token});
@@ -128,7 +128,7 @@ router.post('/login',(req,res)=>{
 //@route Post /api/user/verification
 //@desc verify users & grant permissions
 //@access private
-
+/** 
 
 router.post('/verification',passport.authenticate('jwt', { session: false }),(req,res)=>{
     if(req.user.verificationpin==PermissionRequest.body.pin)

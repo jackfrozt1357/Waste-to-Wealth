@@ -23,13 +23,13 @@ router.post('/',passport.authenticate('jwt',{session:false}),(req,res)=>{
     else {
         if (!(req.user.verified===1))//remve ! for testing
         {
-            res.json({success:"false",msg:"You are not verified"});
+            res.json({success:"false",Error:"You are not verified"});
 
         }
         else{
           if(!req.user.type===0)//if not recr8tor
           {
-              res.json({success:"false",msg :"Invalid action "})
+              res.json({success:"false",Error :"Invalid action "})
           }
           else
           {
@@ -69,7 +69,7 @@ router.post('/',passport.authenticate('jwt',{session:false}),(req,res)=>{
 //@access private 
 
 router.get('/',passport.authenticate('jwt',{session:false}),(req,res)=>{
-
+    
     Inform.find({user:req.user._id})
         .then((result)=>{
             res.json({result})
