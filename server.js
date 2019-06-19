@@ -8,7 +8,7 @@ const morgan = require('morgan');
 
 const usersRoute = require('./api/routes/Users');
 const informRoute = require('./api/routes/informs');
-const postRoute =require('./api/routes/posts');
+const feedRoute =require('./api/routes/feeds');
 const Mongo_URI = require('./config/secret').MONGDB_URL;
 
 
@@ -40,7 +40,7 @@ app.use((req,res,next)=>{
 
 app.use('/api/user',usersRoute);
 app.use('/api/inform',informRoute);
-app.use('/api/post',postRoute);
+app.use('/api/feeds',feedRoute);
 
 
 

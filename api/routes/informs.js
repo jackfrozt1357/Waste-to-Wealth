@@ -68,4 +68,15 @@ router.post('/',passport.authenticate('jwt',{session:false}),(req,res)=>{
 //@desc  fetch a user reports(informs)
 //@access private 
 
+router.get('/',passport.authenticate('jwt',{session:false}),(req,res)=>{
+
+    Inform.find({user:req.user._id})
+        .then((result)=>{
+            res.json({result})
+
+        })
+        .catch((err)=>{
+            res.json({sucess:"false",Error:perrors.Unknown})
+        });
+});
 module.exports=router;

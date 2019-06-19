@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const shortid = require('shortid')
 
 const userSchema =  new mongoose.Schema(
     {   
@@ -35,10 +36,17 @@ const userSchema =  new mongoose.Schema(
             default :"0" //value is one when 1 when verified
         }
         ,
-        location :{
-            type : String,
-           // required : true
-        
+        lng:{
+            type:String,
+            
+            
+        },
+        lng:{
+            type:String
+        },
+        verificationpin:{
+            type :String,
+            default:shortid.generate
         }
         
 

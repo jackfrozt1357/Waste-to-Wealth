@@ -9,6 +9,8 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const privatekey = require('../../config/secret').privatekey;
 
+
+
 //@route  POST /User
 //@desc   create user account
 //@access public
@@ -46,7 +48,9 @@ router.post('/',(req,res)=>{
                                             phonenumber : req.body.phonenumber,
                                             firstname : names[0],
                                             lastname : names[1],
-                                            type : req.body.type
+                                            type : req.body.type,
+                                            lat : req.body.lat,
+                                            lng: req.body.lng
 
                                         });
                                         
@@ -110,6 +114,7 @@ router.post('/login',(req,res)=>{
                             }
                             else{
                                 res.json({success:"true",email:rdata.email,firstname:rdata.firstname,lastname:rdata.lastname,type:rdata.type,phonenumber:rdata.phonenumber,verified:rdata.verified,access_token:"Bearer "+token});
+                                //start here
                             }
                         });
                     }
@@ -126,10 +131,24 @@ router.post('/login',(req,res)=>{
 
 
 router.post('/verification',passport.authenticate('jwt', { session: false }),(req,res)=>{
-    res.json({sucess:"true"});
+    if(req.user.verificationpin==PermissionRequest.body.pin)
+    {
+       User.updateOne({_id:req.user.verificationpin},{verified:"1"})
+    }
+
     // INSTRUCTIONS : on signup send mail to user
     //user client calls verify that takes in a pin
     // then if true send and empty array(or send success : true)
     //TODO use get phonenumber to use mailgun
 });
+/*
+const accountSid = require('../../config/secret'.sid;
+const authToken = require('../../config/secret').authtoken;
+const client = require('twilio')(accountSid, authToken);
+
+client.messages
+      .create({from: '+15017122661', body: rdata.verificationpin, to: req.body.phonenumber})
+      .then(message => console.log(message.sid));
+*/
+
 module.exports = router;
