@@ -8,6 +8,7 @@ const Perrors = require('../Errors')
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const privatekey = require('../../config/secret').privatekey;
+const auth = require('../middleware/auth');
 
 
 
@@ -125,13 +126,8 @@ router.post('/login',(req,res)=>{
     }
     
 });
-//@route Post /api/user/verification
-//@desc verify users & grant permissions
-//@access private
-/** 
-
-router.post('/verification',passport.authenticate('jwt', { session: false }),(req,res)=>{
-    if(req.user.verificationpin==PermissionRequest.body.pin)
+router.post('/verification',auth,(req,res)=>{
+  /*  if(req.user.verificationpin==PermissionRequest.body.pin)
     {
        User.updateOne({_id:req.user.verificationpin},{verified:"1"})
     }
@@ -139,16 +135,24 @@ router.post('/verification',passport.authenticate('jwt', { session: false }),(re
     // INSTRUCTIONS : on signup send mail to user
     //user client calls verify that takes in a pin
     // then if true send and empty array(or send success : true)
-    //TODO use get phonenumber to use mailgun
-});
-/*
-const accountSid = require('../../config/secret'.sid;
-const authToken = require('../../config/secret').authtoken;
-const client = require('twilio')(accountSid, authToken);
+    //TODO use get phonenumber to use mailgun or twilo */
 
-client.messages
-      .create({from: '+15017122661', body: rdata.verificationpin, to: req.body.phonenumber})
-      .then(message => console.log(message.sid));
-*/
+    if(req.user.email==req.body.email)
+
+
+    try {
+        User.updateOne(
+           { email : req.user.email },
+           { $set: {  verfied: "1" } },
+           (err,aw)=>{
+               res.json(aw);
+           }
+
+        );
+     } catch (e) {
+        res.status(401).json({Success:"false",Error:"verifcation failed"});
+     }
+    
+});
 
 module.exports = router;

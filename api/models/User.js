@@ -33,7 +33,7 @@ const userSchema =  new mongoose.Schema(
         },
         verified :{
             type : String,
-            default :"0" //value is one when 1 when verified
+            default :"1" //value is one when 1 when verified
         }
         ,
         lng:{

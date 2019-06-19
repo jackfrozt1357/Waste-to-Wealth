@@ -5,16 +5,18 @@ const passport = require('passport');
 const axios = require('axios');
 const locationapi = require('../../config/secret').locationkey;
 const per = require('../Errors');
+const auth = require('../middleware/auth');
 
 
 
 //@route GET /api/feeds
 //@desc get informs of recr8tor in same city and distance
 //@access private
-router.get('/',passport.authenticate('jwt',{session:false}),(req,res)=>{
+router.get('/',auth,(req,res)=>{
         if(req.user.type === 1)//check if intermidairy
         {
-
+          
+        
     
           if (req.user.verified==1)
           {

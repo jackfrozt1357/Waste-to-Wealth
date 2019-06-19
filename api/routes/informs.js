@@ -5,6 +5,7 @@ const passport = require('passport');
 const perrors = require('../Errors');
 const axios =require('axios');
 const locationapi = require('../../config/secret').locationkey;
+const auth = require('../middleware/auth');
 
 //TODO Listadd inform
 //get all your inform
@@ -13,7 +14,7 @@ const locationapi = require('../../config/secret').locationkey;
 //@router POST /api/inform
 //@desc recre8tors to inform intermidiaries
 //@access private
-router.post('/',passport.authenticate('jwt',{session:false}),(req,res)=>{
+router.post('/',auth,(req,res)=>{
     if(!req.body.lat|| !req.body.lng || !req.body.quantity || !req.body.type || !req.body.picture || !req.body.address )
     {
         //the picture is a cloudinary link
@@ -68,7 +69,7 @@ router.post('/',passport.authenticate('jwt',{session:false}),(req,res)=>{
 //@desc  fetch a user reports(informs)
 //@access private 
 
-router.get('/',passport.authenticate('jwt',{session:false}),(req,res)=>{
+router.get('/',auth,(req,res)=>{
     
     Inform.find({user:req.user._id})
         .then((result)=>{
